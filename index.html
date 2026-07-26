@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Visualizing the Verse — A research-creation video project by Lana das Neves Ravbar Oliveira. Slovenian poetry in the French language.">
+  <meta name="author" content="Lana das Neves Ravbar Oliveira">
+  <title>Lana Ravbar — Visualizing the Verse</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #FDFCF8;
+      --surface: #FFFFFF;
+      --text: #1C1917;
+      --text-secondary: #78716C;
+      --accent: #9C6644;
+      --accent-hover: #7C5336;
+      --border: #E7E5E4;
+      --radius: 8px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1, h2, h3, .poem-text {
+      font-family: 'Playfair Display', serif;
+    }
+
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      background: rgba(253, 252, 248, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      z-index: 1000;
+      padding: 0 24px;
+    }
+
+    .nav-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-weight: 600;
+      font-size: 1.15rem;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: -0.02em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      align-items: center;
+      list-style: none;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--accent); }
+
+    .lang-switcher {
+      display: flex;
+      gap: 6px;
+      margin-left: 16px;
+      padding-left: 16px;
+      border-left: 1px solid var(--border);
+    }
+
+    .lang-btn {
+      background: none;
+      border: 1px solid transparent;
+      padding: 4px 8px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--text-secondary);
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+
+    .lang-btn:hover { color: var(--accent); }
+    .lang-btn.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(156, 102, 68, 0.06);
+    }
+
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--text);
+    }
+
+    /* Sections */
+    section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 100px 24px 60px;
+    }
+
+    .section-title {
+      font-size: 2.2rem;
+      font-weight: 500;
+      margin-bottom: 12px;
+      letter-spacing: -0.02em;
+    }
+
+    .section-subtitle {
+      color: var(--text-secondary);
+      font-size: 1.05rem;
+      margin-bottom: 40px;
+      max-width: 600px;
+    }
+
+    /* Hero */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-top: 80px;
+      position: relative;
+    }
+
+    .hero-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    .hero-title {
+      font-size: clamp(2.8rem, 6vw, 4.5rem);
+      font-weight: 500;
+      line-height: 1.1;
+      margin-bottom: 20px;
+      letter-spacing: -0.03em;
+    }
+
+    .hero-subtitle {
+      font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+      color: var(--text-secondary);
+      font-weight: 300;
+      max-width: 600px;
+      margin-bottom: 32px;
+      line-height: 1.5;
+    }
+
+    .hero-byline {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      font-style: italic;
+      font-family: 'Playfair Display', serif;
+    }
+
+    .hero-line {
+      width: 60px;
+      height: 2px;
+      background: var(--accent);
+      margin: 32px 0;
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(8px); }
+    }
+
+    /* Project */
+    .project-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      margin-top: 32px;
+    }
+
+    .project-text p {
+      margin-bottom: 16px;
+      color: var(--text-secondary);
+    }
+
+    .project-text p strong { color: var(--text); }
+
+    .info-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+    }
+
+    .info-card h3 {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 16px;
+      color: var(--accent);
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+    }
+
+    .info-card ul {
+      list-style: none;
+    }
+
+    .info-card li {
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    .info-card li:last-child { border-bottom: none; }
+
+    .info-card li strong {
+      display: block;
+      color: var(--text);
+      font-weight: 500;
+      margin-bottom: 2px;
+    }
+
+    /* Poem */
+    #poem { padding-top: 80px; }
+
+    .poem-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      margin-top: 32px;
+      align-items: start;
+    }
+
+    .poem-column {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 40px;
+    }
+
+    .poem-column h3 {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      margin-bottom: 24px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+    }
+
+    .poem-text {
+      font-size: 1.15rem;
+      line-height: 2;
+      white-space: pre-line;
+      color: var(--text);
+    }
+
+    .poem-note {
+      margin-top: 32px;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      font-style: italic;
+      max-width: 700px;
+    }
+
+    .poem-links {
+      margin-top: 16px;
+      font-size: 0.8rem;
+    }
+
+    .poem-links a {
+      color: var(--accent);
+      text-decoration: none;
+      margin-right: 16px;
+    }
+
+    .poem-links a:hover { text-decoration: underline; }
+
+    /* Approach */
+    .approach-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      margin-top: 32px;
+    }
+
+    .approach-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .approach-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.04);
+    }
+
+    .approach-card h4 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    .approach-card p {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    /* CV */
+    .cv-container {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 48px;
+      margin-top: 32px;
+    }
+
+    .cv-sidebar {
+      text-align: center;
+    }
+
+    .artist-photo {
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--border);
+      margin-bottom: 20px;
+      background: var(--surface);
+    }
+
+    .cv-sidebar h3 {
+      font-size: 1.3rem;
+      margin-bottom: 4px;
+    }
+
+    .cv-sidebar .role {
+      font-size: 0.85rem;
+      color: var(--accent);
+      font-weight: 500;
+      margin-bottom: 20px;
+    }
+
+    .cv-main h4 {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      margin: 28px 0 12px;
+      font-weight: 600;
+    }
+
+    .cv-main h4:first-child { margin-top: 0; }
+
+    .cv-main p, .cv-main li {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .cv-main ul { list-style: none; padding: 0; }
+    .cv-main li { padding-left: 0; }
+
+    .cv-main strong { color: var(--text); font-weight: 500; }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .tag {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 4px 12px;
+      border-radius: 100px;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .work-entry {
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .work-entry:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .work-entry .work-title {
+      font-weight: 600;
+      color: var(--text);
+      font-size: 0.95rem;
+    }
+
+    .work-entry .work-meta {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+
+    .work-entry .work-skills {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .lang-level {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .lang-level .lang-name {
+      font-weight: 500;
+      color: var(--text);
+      min-width: 100px;
+    }
+
+    .lang-level .lang-bar {
+      flex: 1;
+      height: 6px;
+      background: var(--border);
+      border-radius: 3px;
+      max-width: 200px;
+      overflow: hidden;
+    }
+
+    .lang-level .lang-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 3px;
+    }
+
+    .lang-level .lang-label {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      min-width: 60px;
+    }
+
+    /* Contact */
+    #contact {
+      text-align: center;
+      padding-bottom: 100px;
+    }
+
+    #contact .section-title { margin-bottom: 16px; }
+    #contact p { color: var(--text-secondary); margin-bottom: 24px; }
+
+    .contact-email {
+      display: inline-block;
+      font-size: 1.1rem;
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
+      border-bottom: 1px solid var(--accent);
+      padding-bottom: 2px;
+      transition: opacity 0.2s;
+    }
+
+    .contact-email:hover { opacity: 0.7; }
+
+    .contact-institution {
+      margin-top: 16px;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 40px 24px;
+      border-top: 1px solid var(--border);
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    /* Scroll animations */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Mobile */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .mobile-menu-btn { display: block; }
+
+      .project-grid,
+      .poem-container,
+      .approach-grid,
+      .cv-container {
+        grid-template-columns: 1fr;
+      }
+
+      .cv-sidebar { text-align: left; }
+      .artist-photo { margin: 0 auto 20px; display: block; }
+
+      section { padding: 80px 20px 40px; }
+      .poem-column { padding: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-container">
+      <a href="#" class="logo">Lana Ravbar</a>
+      <ul class="nav-links">
+        <li><a href="#project" data-i18n="nav_project">Project</a></li>
+        <li><a href="#poem" data-i18n="nav_poem">Poem</a></li>
+        <li><a href="#approach" data-i18n="nav_approach">Approach</a></li>
+        <li><a href="#cv" data-i18n="nav_cv">Artist CV</a></li>
+        <li><a href="#contact" data-i18n="nav_contact">Contact</a></li>
+        <li class="lang-switcher">
+          <button class="lang-btn active" data-lang="en" onclick="setLanguage('en')">EN</button>
+          <button class="lang-btn" data-lang="sl" onclick="setLanguage('sl')">SL</button>
+          <button class="lang-btn" data-lang="fr" onclick="setLanguage('fr')">FR</button>
+          <button class="lang-btn" data-lang="pt" onclick="setLanguage('pt')">PT</button>
+        </li>
+      </ul>
+      <button class="mobile-menu-btn" onclick="toggleMenu()">☰</button>
+    </div>
+  </nav>
+
+  <section id="hero">
+    <div class="hero-label" data-i18n="hero_label">Research-Creation Video Project</div>
+    <h1 class="hero-title" data-i18n="hero_title">Visualizing the Verse</h1>
+    <p class="hero-subtitle" data-i18n="hero_subtitle">A research-creation video project of Slovenian poets in the French language</p>
+    <div class="hero-line"></div>
+    <p class="hero-byline" data-i18n="hero_byline">By Lana das Neves Ravbar Oliveira</p>
+    <div class="scroll-hint">Scroll</div>
+  </section>
+
+  <section id="project" class="reveal">
+    <h2 class="section-title" data-i18n="project_title">The Project</h2>
+    <p class="section-subtitle" data-i18n="project_subtitle">An initiative for the direct implementation of the Slovenian-French Action Plan for 2024–2027</p>
+
+    <div class="project-grid">
+      <div class="project-text">
+        <p data-i18n="project_p1">This initiative brings together the Faculty of Design in Ljubljana and ECV École de Création Visuelle in Paris to create an animated short film based on the poem <em>“8.”</em> by Slovenian poet Meta Kušar.</p>
+        <p data-i18n="project_p2">The film blends special visual effects with real footage filmed in Paris, integrating kinetic typography and motion design to bring the poem into physical space. It serves as a direct implementation of the Slovenian-French Action Plan for 2024–2027.</p>
+        <p data-i18n="project_p3">Spanning two semesters (winter 2026/27 and summer 2027), the project is structured as a single, indivisible academic block combining technical acquisition in Paris with full production and finalization.</p>
+      </div>
+
+      <div>
+        <div class="info-card" style="margin-bottom: 20px;">
+          <h3 data-i18n="project_goals_title">Strategic Goals</h3>
+          <ul>
+            <li data-i18n="project_goal_1">Support student mobility and university partnerships</li>
+            <li data-i18n="project_goal_2">Co-produce Slovenian-French films</li>
+            <li data-i18n="project_goal_3">Promote cultural contacts between France and Slovenia</li>
+            <li data-i18n="project_goal_4">Support the mobility of artists</li>
+          </ul>
+        </div>
+
+        <div class="info-card">
+          <h3 data-i18n="project_inst_title">Partner Institutions</h3>
+          <ul>
+            <li><strong>Faculty of Design, Ljubljana</strong><span data-i18n="project_inst_fd"> — Academic supervision & project validation</span></li>
+            <li><strong>ECV, Paris</strong><span data-i18n="project_inst_ecv"> — Technical training, mentorship & ECTS</span></li>
+            <li><strong>Ministry of Foreign and European Affairs of Slovenia</strong><span data-i18n="project_inst_min"> — Strategic support for cultural diplomacy</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="poem" class="reveal">
+    <h2 class="section-title">8.</h2>
+    <p class="section-subtitle" data-i18n="poem_subtitle">Meta Kušar — Original Slovenian with French translation</p>
+
+    <div class="poem-container">
+      <div class="poem-column">
+        <h3>Slovenščina</h3>
+        <div class="poem-text">8.
+Narava stoji, duh pa se sprehaja.
+Pod kostanji in skozi čas.
+Po rami, do vratu.
+Po roki na papir.
+Ne znajdem se.
+Dolga leta se je akustika
+mojega vrta kvarila.
+Prostori so odlični, čeprav zastavljeni.
+Moji dolgovi so branili izvire.
+Poplačala sem jih z dejstvi,
+ki jih zmagovalci niso mogli
+malikovati.</div>
+      </div>
+
+      <div class="poem-column">
+        <h3>Français</h3>
+        <div class="poem-text">8.
+La nature reste là, l'esprit se promène.
+Sous les châtaignes et à travers le temps.
+Par l'épaule, jusqu'au cou.
+Par la main vers la feuille.
+Je ne m'y retrouve.
+Pendant des années, l'acoustique de mon
+jardin tombait en panne.
+Ces lieux sont exquis, même si mis en gage.
+Mes dettes étaient à la défense des sources.
+Je m'en suis acquittée par les faits,
+des faits que les vainqueurs ne pouvaient
+pas idolâtrer.</div>
+      </div>
+    </div>
+
+    <p class="poem-note" data-i18n="poem_note">The poem explores how nature remains constant while the poet's mind wanders through time, memory, and loss — a perfect subject for visual translation.</p>
+    <div class="poem-links">
+      <a href="https://www.poetryinternational.com/en/poets-poems/poems/poem/103-5237_8#lang-org" target="_blank">Poetry International</a>
+      <a href="https://nouages.com/2021/08/26/meta-kusar-slovenie" target="_blank">Nouages</a>
+    </div>
+  </section>
+
+  <section id="approach" class="reveal">
+    <h2 class="section-title" data-i18n="approach_title">Artistic Approach</h2>
+    <p class="section-subtitle" data-i18n="approach_subtitle">Instead of simple subtitles, the project uses advanced digital motion graphics to merge text with reality.</p>
+
+    <div class="approach-grid">
+      <div class="approach-card">
+        <h4 data-i18n="approach_1_title">Motion Design</h4>
+        <p data-i18n="approach_1_desc">Morphing objects into one another to visualize poetic transitions between memory, nature, and the body.</p>
+      </div>
+      <div class="approach-card">
+        <h4 data-i18n="approach_2_title">Kinetic Typography</h4>
+        <p data-i18n="approach_2_desc">Animating words so they move and react like living elements within the frame.</p>
+      </div>
+      <div class="approach-card">
+        <h4 data-i18n="approach_3_title">Compositing</h4>
+        <p data-i18n="approach_3_desc">Seamlessly blending digital text with live-action footage filmed in Paris.</p>
+      </div>
+      <div class="approach-card">
+        <h4 data-i18n="approach_4_title">French Art Integration</h4>
+        <p data-i18n="approach_4_desc">Incorporating diverse French art pieces to bridge Slovenian poetry with French visual culture.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="cv" class="reveal">
+    <h2 class="section-title" data-i18n="cv_title">Artist CV</h2>
+    <p class="section-subtitle" data-i18n="cv_subtitle">Visual artist and filmmaker based in Ljubljana, Slovenia.</p>
+
+    <div class="cv-container">
+      <div class="cv-sidebar">
+        <img src="lana-portrait.jpg" alt="Lana Ravbar" class="artist-photo">
+        <h3>Lana das Neves<br>Ravbar Oliveira</h3>
+        <div class="role" data-i18n="cv_role">Visual Artist & Filmmaker</div>
+        <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:20px;" data-i18n="cv_bio">Visual Communication student with a specialized focus on motion graphics and video editing. Highly adaptable, creative, and experienced in international studio environments.</p>
+        <div style="font-size:0.85rem;">
+          <strong style="color:var(--text);" data-i18n="cv_contact_title">Contact</strong><br>
+          <a href="mailto:lanaravbar@gmail.com" style="color:var(--accent); text-decoration:none;">lanaravbar@gmail.com</a><br>
+          <span style="color:var(--text-secondary);">(+386) 69 764 628</span><br>
+          <span style="color:var(--text-secondary); font-size:0.75rem;">Kardeljeva ploščad 5, 1000 Ljubljana</span>
+        </div>
+      </div>
+
+      <div class="cv-main">
+        <h4 data-i18n="cv_education_title">Education</h4>
+        <p><strong data-i18n="cv_edu_1_school">Faculty of Design, Ljubljana</strong><br><span data-i18n="cv_edu_1_desc">BA in Visual Communication — 2nd Year (ongoing), EQF Level 6</span></p>
+        <p><strong>ECV École de Création Visuelle, Paris</strong><br><span data-i18n="cv_edu_2_desc">Exchange Program, Animation Cinema — Winter/Summer 2026–2027 (planned)</span></p>
+
+        <h4 data-i18n="cv_work_title">Work Experience</h4>
+
+        <div class="work-entry">
+          <div class="work-title" data-i18n="cv_work_1_title">Post-Production Supervisor — Split Studio</div>
+          <div class="work-meta" data-i18n="cv_work_1_meta">São Paulo, Brazil | July 2025 – September 2025</div>
+          <div class="work-skills" data-i18n="cv_work_1_skills">Visual effects, shading, video editing, image editing, sound editing</div>
+        </div>
+
+        <div class="work-entry">
+          <div class="work-title" data-i18n="cv_work_2_title">3D Animator — Sintesi / HUB</div>
+          <div class="work-meta" data-i18n="cv_work_2_meta">Trieste, Italy | January 2023 – February 2023</div>
+          <div class="work-skills" data-i18n="cv_work_2_skills">3D sculpting, animation, video editing, image editing</div>
+        </div>
+
+        <h4 data-i18n="cv_projects_title">Selected Project</h4>
+        <p><strong data-i18n="cv_project_1_title">Visualizing the Verse</strong> <span style="color:var(--text-secondary);">(2025–2027)</span><br><span data-i18n="cv_project_1_desc">Research-creation video project supported by the Faculty of Design and aligned with the Slovenian-French Action Plan 2024–2027. A 3–5 minute animated short film based on Meta Kušar's poem "8."</span></p>
+
+        <h4 data-i18n="cv_skills_title">Areas of Practice</h4>
+        <div class="tag-list">
+          <span class="tag">Motion Design</span>
+          <span class="tag">Compositing</span>
+          <span class="tag">Kinetic Typography</span>
+          <span class="tag">3D Animation</span>
+          <span class="tag">3D Sculpting</span>
+          <span class="tag">Video Editing</span>
+          <span class="tag">Sound Editing</span>
+          <span class="tag">Storyboarding</span>
+          <span class="tag">Digital Painting</span>
+          <span class="tag">Poetic Visual Translation</span>
+          <span class="tag">Cross-Cultural Collaboration</span>
+        </div>
+
+        <h4 data-i18n="cv_languages_title">Languages</h4>
+        <div class="lang-level">
+          <span class="lang-name" data-i18n="cv_lang_1_name">Portuguese</span>
+          <div class="lang-bar"><div class="lang-fill" style="width:100%"></div></div>
+          <span class="lang-label" data-i18n="cv_lang_1_level">Native</span>
+        </div>
+        <div class="lang-level">
+          <span class="lang-name" data-i18n="cv_lang_2_name">Slovenian</span>
+          <div class="lang-bar"><div class="lang-fill" style="width:90%"></div></div>
+          <span class="lang-label" data-i18n="cv_lang_2_level">C1</span>
+        </div>
+        <div class="lang-level">
+          <span class="lang-name" data-i18n="cv_lang_3_name">English</span>
+          <div class="lang-bar"><div class="lang-fill" style="width:90%"></div></div>
+          <span class="lang-label" data-i18n="cv_lang_3_level">C1</span>
+        </div>
+        <div class="lang-level">
+          <span class="lang-name" data-i18n="cv_lang_4_name">French</span>
+          <div class="lang-bar"><div class="lang-fill" style="width:55%"></div></div>
+          <span class="lang-label" data-i18n="cv_lang_4_level">B1 (learning)</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="reveal">
+    <h2 class="section-title" data-i18n="contact_title">Contact</h2>
+    <p data-i18n="contact_p">For inquiries regarding the project, institutional collaboration, or press:</p>
+    <a href="mailto:lanaravbar@gmail.com" class="contact-email">lanaravbar@gmail.com</a>
+    <p class="contact-institution" data-i18n="contact_institution">Faculty of Design, Ljubljana</p>
+  </section>
+
+  <footer>
+    <p data-i18n="footer">© 2025 Lana das Neves Ravbar Oliveira. Project supported by the Faculty of Design, Ljubljana.</p>
+  </footer>
+
+  <script>
+    const i18n = {
+      en: {
+        nav_project: "Project",
+        nav_poem: "Poem",
+        nav_approach: "Approach",
+        nav_cv: "Artist CV",
+        nav_contact: "Contact",
+        hero_label: "Research-Creation Video Project",
+        hero_title: "Visualizing the Verse",
+        hero_subtitle: "A research-creation video project of Slovenian poets in the French language",
+        hero_byline: "By Lana das Neves Ravbar Oliveira",
+        project_title: "The Project",
+        project_subtitle: "An initiative for the direct implementation of the Slovenian-French Action Plan for 2024–2027",
+        project_p1: "This initiative brings together the Faculty of Design in Ljubljana and ECV École de Création Visuelle in Paris to create an animated short film based on the poem \"8.\" by Slovenian poet Meta Kušar.",
+        project_p2: "The film blends special visual effects with real footage filmed in Paris, integrating kinetic typography and motion design to bring the poem into physical space. It serves as a direct implementation of the Slovenian-French Action Plan for 2024–2027.",
+        project_p3: "Spanning two semesters (winter 2026/27 and summer 2027), the project is structured as a single, indivisible academic block combining technical acquisition in Paris with full production and finalization.",
+        project_goals_title: "Strategic Goals",
+        project_goal_1: "Support student mobility and university partnerships",
+        project_goal_2: "Co-produce Slovenian-French films",
+        project_goal_3: "Promote cultural contacts between France and Slovenia",
+        project_goal_4: "Support the mobility of artists",
+        project_inst_title: "Partner Institutions",
+        project_inst_fd: " — Academic supervision & project validation",
+        project_inst_ecv: " — Technical training, mentorship & ECTS",
+        project_inst_min: " — Strategic support for cultural diplomacy",
+        poem_subtitle: "Meta Kušar — Original Slovenian with French translation",
+        poem_note: "The poem explores how nature remains constant while the poet's mind wanders through time, memory, and loss — a perfect subject for visual translation.",
+        approach_title: "Artistic Approach",
+        approach_subtitle: "Instead of simple subtitles, the project uses advanced digital motion graphics to merge text with reality.",
+        approach_1_title: "Motion Design",
+        approach_1_desc: "Morphing objects into one another to visualize poetic transitions between memory, nature, and the body.",
+        approach_2_title: "Kinetic Typography",
+        approach_2_desc: "Animating words so they move and react like living elements within the frame.",
+        approach_3_title: "Compositing",
+        approach_3_desc: "Seamlessly blending digital text with live-action footage filmed in Paris.",
+        approach_4_title: "French Art Integration",
+        approach_4_desc: "Incorporating diverse French art pieces to bridge Slovenian poetry with French visual culture.",
+        cv_title: "Artist CV",
+        cv_subtitle: "Visual artist and filmmaker based in Ljubljana, Slovenia.",
+        cv_role: "Visual Artist & Filmmaker",
+        cv_bio: "Visual Communication student with a specialized focus on motion graphics and video editing. Highly adaptable, creative, and experienced in international studio environments.",
+        cv_education_title: "Education",
+        cv_edu_1_school: "Faculty of Design, Ljubljana",
+        cv_edu_1_desc: "BA in Visual Communication — 2nd Year (ongoing), EQF Level 6",
+        cv_edu_2_desc: "Exchange Program, Animation Cinema — Winter/Summer 2026–2027 (planned)",
+        cv_work_title: "Work Experience",
+        cv_work_1_title: "Post-Production Supervisor — Split Studio",
+        cv_work_1_meta: "São Paulo, Brazil | July 2025 – September 2025",
+        cv_work_1_skills: "Visual effects, shading, video editing, image editing, sound editing",
+        cv_work_2_title: "3D Animator — Sintesi / HUB",
+        cv_work_2_meta: "Trieste, Italy | January 2023 – February 2023",
+        cv_work_2_skills: "3D sculpting, animation, video editing, image editing",
+        cv_projects_title: "Selected Project",
+        cv_project_1_title: "Visualizing the Verse",
+        cv_project_1_desc: "Research-creation video project supported by the Faculty of Design and aligned with the Slovenian-French Action Plan 2024–2027. A 3–5 minute animated short film based on Meta Kušar's poem \"8.\"",
+        cv_skills_title: "Areas of Practice",
+        cv_languages_title: "Languages",
+        cv_lang_1_name: "Portuguese",
+        cv_lang_1_level: "Native",
+        cv_lang_2_name: "Slovenian",
+        cv_lang_2_level: "C1",
+        cv_lang_3_name: "English",
+        cv_lang_3_level: "C1",
+        cv_lang_4_name: "French",
+        cv_lang_4_level: "B1 (learning)",
+        cv_contact_title: "Contact",
+        contact_title: "Contact",
+        contact_p: "For inquiries regarding the project, institutional collaboration, or press:",
+        contact_institution: "Faculty of Design, Ljubljana",
+        footer: "© 2025 Lana das Neves Ravbar Oliveira. Project supported by the Faculty of Design, Ljubljana."
+      },
+      sl: {
+        nav_project: "Projekt",
+        nav_poem: "Pesem",
+        nav_approach: "Pristop",
+        nav_cv: "Umetnikov CV",
+        nav_contact: "Kontakt",
+        hero_label: "Raziskovalno-ustvarjalni video projekt",
+        hero_title: "Vizualizacija verza",
+        hero_subtitle: "Raziskovalno-ustvarjalni video projekt slovenskih pesnikov v francoščini",
+        hero_byline: "Avtorica: Lana das Neves Ravbar Oliveira",
+        project_title: "Projekt",
+        project_subtitle: "Pobuda za neposredno uresničitev Akcijskega načrta Slovenija–Francija 2024–2027",
+        project_p1: "Ta pobuda združuje Fakulteto za dizajn v Ljubljani in ECV École de Création Visuelle v Parizu za ustvarjanje animiranega kratkega filma na podlagi pesmi \"8.\" slovenske pesnice Mete Kušar.",
+        project_p2: "Film združuje posebne vizualne učinke s posnetki, posnetimi v Parizu, ter integrira kinetično tipografijo in motion design, da pesem pripelje v fizični prostor. Predstavlja neposredno uresničitev Akcijskega načrta Slovenija–Francija 2024–2027.",
+        project_p3: "Projekt traja dva semestra (zima 2026/27 in poletje 2027) in je strukturiran kot enoten, nedeljiv akademski sklop, ki združuje tehnično usposabljanje v Parizu s polno produkcijo in finalizacijo.",
+        project_goals_title: "Strateški cilji",
+        project_goal_1: "Podpora mobilnosti študentov in partnerstvom med univerzami",
+        project_goal_2: "Koprodukcija slovensko-francoskih filmov",
+        project_goal_3: "Spodbujanje kulturnih stikov med Francijo in Slovenijo",
+        project_goal_4: "Podpora mobilnosti umetnikov",
+        project_inst_title: "Partnerske institucije",
+        project_inst_fd: " — Akademski nadzor in validacija projekta",
+        project_inst_ecv: " — Tehnično usposabljanje, mentorstvo in ECTS",
+        project_inst_min: " — Strateška podpora za kulturno diplomacijo",
+        poem_subtitle: "Meta Kušar — Izvirni slovenski tekst s francoskim prevodom",
+        poem_note: "Pesem raziskuje, kako narava ostaja nespremenjena, medtem ko se pesnikov um potepa skozi čas, spomin in izgubo — popolna tema za vizualni prevod.",
+        approach_title: "Umetniški pristop",
+        approach_subtitle: "Namesto preprostih podnapisov projekt uporablja napredno digitalno animacijo, da združi besedilo z resničnostjo.",
+        approach_1_title: "Motion design",
+        approach_1_desc: "Preoblikovanje predmetov drug v drugega za vizualizacijo pesniških prehodov med spominom, naravo in telesom.",
+        approach_2_title: "Kinetična tipografija",
+        approach_2_desc: "Animacija besed, da se gibljejo in odzivajo kot živi elementi v kadru.",
+        approach_3_title: "Kompoziting",
+        approach_3_desc: "Brezšivno zlivanje digitalnega besedila s posnetki v živo, posnetimi v Parizu.",
+        approach_4_title: "Integracija francoske umetnosti",
+        approach_4_desc: "Vključitev različnih francoskih umetniških del za povezovanje slovenske poezije s francosko vizualno kulturo.",
+        cv_title: "Umetnikov CV",
+        cv_subtitle: "Vizualna umetnica in filmarka iz Ljubljane, Slovenija.",
+        cv_role: "Vizualna umetnica in filmarka",
+        cv_bio: "Študentka vizualne komunikacije s specializacijo za motion graphics in video montažo. Zelo prilagodljiva, ustvarjalna in izkušena v mednarodnih studijskih okoljih.",
+        cv_education_title: "Izobrazba",
+        cv_edu_1_school: "Fakulteta za dizajn, Ljubljana",
+        cv_edu_1_desc: "BA Vizualna komunikacija — 2. letnik (v teku), raven EQF 6",
+        cv_edu_2_desc: "Izmenjava, Animacijski film — Zimski/poletni semester 2026–2027 (načrtovano)",
+        cv_work_title: "Delovne izkušnje",
+        cv_work_1_title: "Nadzornica postprodukcije — Split Studio",
+        cv_work_1_meta: "São Paulo, Brazilija | julij 2025 – september 2025",
+        cv_work_1_skills: "Vizualni učinki, senčenje, video montaža, obdelava slik, zvočna montaža",
+        cv_work_2_title: "3D animatorica — Sintesi / HUB",
+        cv_work_2_meta: "Trst, Italija | januar 2023 – februar 2023",
+        cv_work_2_skills: "3D kiparstvo, animacija, video montaža, obdelava slik",
+        cv_projects_title: "Izbrani projekt",
+        cv_project_1_title: "Vizualizacija verza",
+        cv_project_1_desc: "Raziskovalno-ustvarjalni video projekt, podprt s strani Fakultete za dizajn in usklajen z Akcijskim načrtom Slovenija–Francija 2024–2027. 3–5 minutni animirani kratki film na podlagi pesmi \"8.\" Mete Kušar.",
+        cv_skills_title: "Področja prakse",
+        cv_languages_title: "Jeziki",
+        cv_lang_1_name: "Portugalščina",
+        cv_lang_1_level: "Materinščina",
+        cv_lang_2_name: "Slovenščina",
+        cv_lang_2_level: "C1",
+        cv_lang_3_name: "Angleščina",
+        cv_lang_3_level: "C1",
+        cv_lang_4_name: "Francoščina",
+        cv_lang_4_level: "B1 (učenje)",
+        cv_contact_title: "Kontakt",
+        contact_title: "Kontakt",
+        contact_p: "Za povpraševanja v zvezi s projektom, institucionalnim sodelovanjem ali mediji:",
+        contact_institution: "Fakulteta za dizajn, Ljubljana",
+        footer: "© 2025 Lana das Neves Ravbar Oliveira. Projekt podpira Fakulteta za dizajn, Ljubljana."
+      },
+      fr: {
+        nav_project: "Projet",
+        nav_poem: "Poème",
+        nav_approach: "Démarche",
+        nav_cv: "CV de l'artiste",
+        nav_contact: "Contact",
+        hero_label: "Projet vidéo de recherche-création",
+        hero_title: "Visualiser le vers",
+        hero_subtitle: "Un projet vidéo de recherche-création sur les poètes slovènes en langue française",
+        hero_byline: "Par Lana das Neves Ravbar Oliveira",
+        project_title: "Le Projet",
+        project_subtitle: "Une initiative pour la mise en œuvre directe du Plan d'action Slovénie–France 2024–2027",
+        project_p1: "Cette initiative réunit la Faculté de Design de Ljubljana et l'ECV École de Création Visuelle de Paris pour créer un court métrage animé basé sur le poème \"8.\" de la poétesse slovène Meta Kušar.",
+        project_p2: "Le film mêle effets visuels spéciaux et images réelles tournées à Paris, intégrant typographie cinétique et motion design pour incarner le poème dans l'espace physique. Il constitue une mise en œuvre directe du Plan d'action Slovénie–France 2024–2027.",
+        project_p3: "S'étendant sur deux semestres (hiver 2026/27 et été 2027), le projet est structuré comme un bloc académique unique et indivisible combinant l'acquisition technique à Paris avec la production complète et la finalisation.",
+        project_goals_title: "Objectifs stratégiques",
+        project_goal_1: "Soutenir la mobilité étudiante et les partenariats universitaires",
+        project_goal_2: "Co-produire des films slovéno-français",
+        project_goal_3: "Promouvoir les contacts culturels entre la France et la Slovénie",
+        project_goal_4: "Soutenir la mobilité des artistes",
+        project_inst_title: "Institutions partenaires",
+        project_inst_fd: " — Supervision académique et validation du projet",
+        project_inst_ecv: " — Formation technique, mentorat et ECTS",
+        project_inst_min: " — Soutien stratégique pour la diplomatie culturelle",
+        poem_subtitle: "Meta Kušar — Texte original slovène avec traduction française",
+        poem_note: "Le poème explore comment la nature reste constante tandis que l'esprit du poète vagabonde à travers le temps, la mémoire et la perte — un sujet parfait pour la traduction visuelle.",
+        approach_title: "Démarche artistique",
+        approach_subtitle: "Au lieu de simples sous-titres, le projet utilise des animations numériques avancées pour fusionner le texte avec la réalité.",
+        approach_1_title: "Motion design",
+        approach_1_desc: "Métamorphoser les objets les uns dans les autres pour visualiser les transitions poétiques entre mémoire, nature et corps.",
+        approach_2_title: "Typographie cinétique",
+        approach_2_desc: "Animer les mots pour qu'ils se déplacent et réagissent comme des éléments vivants dans le cadre.",
+        approach_3_title: "Compositing",
+        approach_3_desc: "Fusionner de manière transparente le texte numérique avec les images tournées en prise de vue réelle à Paris.",
+        approach_4_title: "Intégration de l'art français",
+        approach_4_desc: "Incorporer diverses œuvres d'art françaises pour faire le pont entre la poésie slovène et la culture visuelle française.",
+        cv_title: "CV de l'artiste",
+        cv_subtitle: "Artiste visuelle et cinéaste basée à Ljubljana, Slovénie.",
+        cv_role: "Artiste visuelle et cinéaste",
+        cv_bio: "Étudiante en communication visuelle, spécialisée en motion graphics et montage vidéo. Très adaptable, créative et expérimentée dans des environnements de studio internationaux.",
+        cv_education_title: "Formation",
+        cv_edu_1_school: "Faculté de Design, Ljubljana",
+        cv_edu_1_desc: "Licence en Communication Visuelle — 2ème année (en cours), Niveau CEC 6",
+        cv_edu_2_desc: "Semestre d'échange, Cinéma d'animation — Hiver/Été 2026–2027 (prévu)",
+        cv_work_title: "Expérience professionnelle",
+        cv_work_1_title: "Superviseuse Post-Production — Split Studio",
+        cv_work_1_meta: "São Paulo, Brésil | juillet 2025 – septembre 2025",
+        cv_work_1_skills: "Effets visuels, shading, montage vidéo, retouche d'images, montage sonore",
+        cv_work_2_title: "Animatrice 3D — Sintesi / HUB",
+        cv_work_2_meta: "Trieste, Italie | janvier 2023 – février 2023",
+        cv_work_2_skills: "Sculpture 3D, animation, montage vidéo, retouche d'images",
+        cv_projects_title: "Projet sélectionné",
+        cv_project_1_title: "Visualiser le vers",
+        cv_project_1_desc: "Projet vidéo de recherche-création soutenu par la Faculté de Design et aligné sur le Plan d'action Slovénie–France 2024–2027. Un court métrage animé de 3–5 minutes basé sur le poème \"8.\" de Meta Kušar.",
+        cv_skills_title: "Domaines de pratique",
+        cv_languages_title: "Langues",
+        cv_lang_1_name: "Portugais",
+        cv_lang_1_level: "Langue maternelle",
+        cv_lang_2_name: "Slovène",
+        cv_lang_2_level: "C1",
+        cv_lang_3_name: "Anglais",
+        cv_lang_3_level: "C1",
+        cv_lang_4_name: "Français",
+        cv_lang_4_level: "B1 (en cours d'apprentissage)",
+        cv_contact_title: "Contact",
+        contact_title: "Contact",
+        contact_p: "Pour toute question concernant le projet, la collaboration institutionnelle ou la presse :",
+        contact_institution: "Faculté de Design, Ljubljana",
+        footer: "© 2025 Lana das Neves Ravbar Oliveira. Projet soutenu par la Faculté de Design, Ljubljana."
+      },
+      pt: {
+        nav_project: "Projeto",
+        nav_poem: "Poema",
+        nav_approach: "Abordagem",
+        nav_cv: "CV da Artista",
+        nav_contact: "Contacto",
+        hero_label: "Projeto de vídeo de pesquisa-criação",
+        hero_title: "Visualizando o verso",
+        hero_subtitle: "Um projeto de vídeo de pesquisa-criação de poetas eslovenos em língua francesa",
+        hero_byline: "Por Lana das Neves Ravbar Oliveira",
+        project_title: "O Projeto",
+        project_subtitle: "Uma iniciativa para a implementação direta do Plano de Ação Eslovénia–França 2024–2027",
+        project_p1: "Esta iniciativa reúne a Faculdade de Design em Liubliana e a ECV École de Création Visuelle em Paris para criar um curta-metragem de animação baseado no poema \"8.\" da poetisa eslovena Meta Kušar.",
+        project_p2: "O filme combina efeitos visuais especiais com imagens reais filmadas em Paris, integrando tipografia cinética e motion design para trazer o poema ao espaço físico. Constitui uma implementação direta do Plano de Ação Eslovénia–França 2024–2027.",
+        project_p3: "Estendendo-se por dois semestres (inverno 2026/27 e verão 2027), o projeto é estruturado como um bloco académico único e indivisível que combina aquisição técnica em Paris com produção completa e finalização.",
+        project_goals_title: "Objetivos estratégicos",
+        project_goal_1: "Apoiar a mobilidade estudantil e parcerias universitárias",
+        project_goal_2: "Co-produzir filmes esloveno-franceses",
+        project_goal_3: "Promover contactos culturais entre França e Eslovénia",
+        project_goal_4: "Apoiar a mobilidade de artistas",
+        project_inst_title: "Instituições parceiras",
+        project_inst_fd: " — Supervisão académica e validação do projeto",
+        project_inst_ecv: " — Formação técnica, mentoria e ECTS",
+        project_inst_min: " — Apoio estratégico para a diplomacia cultural",
+        poem_subtitle: "Meta Kušar — Texto original esloveno com tradução francesa",
+        poem_note: "O poema explora como a natureza permanece constante enquanto a mente do poeta vagueia através do tempo, memória e perda — um tema perfeito para tradução visual.",
+        approach_title: "Abordagem artística",
+        approach_subtitle: "Em vez de simples legendas, o projeto utiliza animação digital avançada para fundir texto com realidade.",
+        approach_1_title: "Motion design",
+        approach_1_desc: "Metamorfosear objetos uns nos outros para visualizar transições poéticas entre memória, natureza e corpo.",
+        approach_2_title: "Tipografia cinética",
+        approach_2_desc: "Animar palavras para que se movam e reajam como elementos vivos no enquadramento.",
+        approach_3_title: "Compositing",
+        approach_3_desc: "Fundir perfeitamente texto digital com imagens de acção ao vivo filmadas em Paris.",
+        approach_4_title: "Integração da arte francesa",
+        approach_4_desc: "Incorporar diversas obras de arte francesas para ligar a poesia eslovena à cultura visual francesa.",
+        cv_title: "CV da Artista",
+        cv_subtitle: "Artista visual e cineasta baseada em Liubliana, Eslovénia.",
+        cv_role: "Artista visual e cineasta",
+        cv_bio: "Estudante de Comunicação Visual com foco especializado em motion graphics e edição de vídeo. Altamente adaptável, criativa e experiente em ambientes de estúdio internacionais.",
+        cv_education_title: "Formação",
+        cv_edu_1_school: "Faculdade de Design, Liubliana",
+        cv_edu_1_desc: "Licenciatura em Comunicação Visual — 2º ano (em curso), Nível EQF 6",
+        cv_edu_2_desc: "Semestre de intercâmbio, Cinema de Animação — Inverno/Verão 2026–2027 (planeado)",
+        cv_work_title: "Experiência profissional",
+        cv_work_1_title: "Supervisora de Pós-Produção — Split Studio",
+        cv_work_1_meta: "São Paulo, Brasil | julho 2025 – setembro 2025",
+        cv_work_1_skills: "Efeitos visuais, shading, edição de vídeo, edição de imagens, edição de som",
+        cv_work_2_title: "Animadora 3D — Sintesi / HUB",
+        cv_work_2_meta: "Trieste, Itália | janeiro 2023 – fevereiro 2023",
+        cv_work_2_skills: "Escultura 3D, animação, edição de vídeo, edição de imagens",
+        cv_projects_title: "Projeto selecionado",
+        cv_project_1_title: "Visualizando o verso",
+        cv_project_1_desc: "Projeto de vídeo de pesquisa-criação apoiado pela Faculdade de Design e alinhado com o Plano de Ação Eslovénia–França 2024–2027. Um curta-metragem de animação de 3–5 minutos baseado no poema \"8.\" de Meta Kušar.",
+        cv_skills_title: "Áreas de prática",
+        cv_languages_title: "Línguas",
+        cv_lang_1_name: "Português",
+        cv_lang_1_level: "Nativo",
+        cv_lang_2_name: "Esloveno",
+        cv_lang_2_level: "C1",
+        cv_lang_3_name: "Inglês",
+        cv_lang_3_level: "C1",
+        cv_lang_4_name: "Francês",
+        cv_lang_4_level: "B1 (a aprender)",
+        cv_contact_title: "Contacto",
+        contact_title: "Contacto",
+        contact_p: "Para questões sobre o projeto, colaboração institucional ou imprensa:",
+        contact_institution: "Faculdade de Design, Liubliana",
+        footer: "© 2025 Lana das Neves Ravbar Oliveira. Projeto apoiado pela Faculdade de Design, Liubliana."
+      }
+    };
+
+    function setLanguage(lang) {
+      document.documentElement.lang = lang;
+      const texts = i18n[lang];
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (texts[key]) el.textContent = texts[key];
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('visible');
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    function toggleMenu() {
+      const nav = document.querySelector('.nav-links');
+      nav.style.display = nav.style.display === 'flex' ? 'none' : 'flex';
+    }
+  </script>
+</body>
+</html>
